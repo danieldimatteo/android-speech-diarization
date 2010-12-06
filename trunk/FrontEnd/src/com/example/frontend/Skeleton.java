@@ -18,15 +18,18 @@ import edu.thesis.skeleton.R;
 
 //imports for sphinx4 front end shit
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.frontend.util.DataDumper;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import java.io.FileInputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Skeleton extends Activity {
     private AudioRecord recorder;
-    //private FeatureFileDumper MfccCreater;
     private static final String OUTPUT_FILE = "/sdcard/recordoutput.raw";
 
     @Override
@@ -157,29 +160,69 @@ public class Skeleton extends Activity {
     }
     
     private void runFeatureFileDumper() throws Exception {
-        //FeatureFileDumper mfccCreator = new FeatureFileDumper();
-    	try {
-    		String configFile = "src/featureextractor/config.xml";
-    		String audioFile = "C:/test.wav"; // Put your file name here
+        FrontEnd frontEnd = null;
+        StreamDataSource audioSource = null;
+        List<float[]> allFeatures;
+        int featureLength = -1;
+        String configFile = "/sdcard/config.xml";
+        String inputAudioFile = "/sdcard/test.wav";
+        String outputMfccFile = "/sdcard/test.mfc";
+        
+        ConfigurationManager cm = new ConfigurationManager(configFile);
+    	
+        try {
+            frontEnd = (FrontEnd) cm.lookup("mfcFrontEnd");
+            audioSource = (StreamDataSource) cm.lookup("streamDataSource");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        //set source for streaming in audio
+        audioSource.setInputStream(new FileInputStream(inputAudioFile), "audio");
+        allFeatures = new LinkedList<float[]>();
+        
+        //get features from audio
+        try {
+            assert (allFeatures != null);
+            Data feature = frontEnd.getData();
+            while (!(feature instanceof DataEndSignal)) {
+                if (feature instanceof DoubleData) {
+                    double[] featureData = ((DoubleData) feature).getValues();
+                    if (featureLength < 0) {
+                        featureLength = featureData.length;
+                        //logger.info("Feature length: " + featureLength);
+                    }
+                    float[] convertedData = new float[featureData.length];
+                    for (int i = 0; i < featureData.length; i++) {
+                        convertedData[i] = (float) featureData[i];
+                    }
+                    allFeatures.add(convertedData);
+                } else if (feature instanceof FloatData) {
+                    float[] featureData = ((FloatData) feature).getValues();
+                    if (featureLength < 0) {
+                        featureLength = featureData.length;
+                        //logger.info("Feature length: " + featureLength);
+                    }
+                    allFeatures.add(featureData);
+                }
+                feature = frontEnd.getData();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        //write the features to binary file
+        DataOutputStream outStream = new DataOutputStream(new FileOutputStream(
+        		outputMfccFile));
+        outStream.writeInt( allFeatures.size() * featureLength );
 
-    		ConfigurationManager cm = new ConfigurationManager(configFile);
+        for (float[] feature : allFeatures) {
+            for (float val : feature) {
+                outStream.writeFloat(val);
+            }
+        }
 
-    		FrontEnd frontend = (FrontEnd) cm.lookup("mfcFrontEnd");
-    		
-    		StreamDataSource source = (StreamDataSource) cm.lookup("streamDataSource");
-    		
-    		source.setInputStream(new FileInputStream(audioFile), audioFile);
-    		
-    		DataDumper dumper = (DataDumper)cm.lookup("dataDumper");
-
-    		Data data = null;
-    		do {
-    			data = dumper.getData();
-    		} while (data != null);
-
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
+        outStream.close();
     }
 
     private void killAudioRecord() {
