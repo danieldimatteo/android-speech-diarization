@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -14,9 +16,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 import edu.thesis.skeleton.R;
 
-//imports for sphinx4 front end shit
+//imports for sphinx4 front end
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
@@ -38,7 +41,7 @@ public class Skeleton extends Activity {
 
         setContentView(R.layout.main);
 
-        Button startBtn = (Button) findViewById(R.id.bgnBtn);
+        final Button startBtn = (Button) findViewById(R.id.bgnBtn);
 
         Button endBtn = (Button) findViewById(R.id.stpBtn);
         
@@ -48,7 +51,15 @@ public class Skeleton extends Activity {
             @Override
             public void onClick(View view) {
                 try {
-                    new RecordAudio().execute();
+                	Context context = getApplicationContext();
+                	CharSequence text = "Now recording";
+                	int duration = Toast.LENGTH_SHORT;
+                	Toast.makeText(context, text, duration).show();
+                    
+                	startBtn.setBackgroundColor(Color.RED);
+                	startBtn.setText("Recording");
+                	
+                	new RecordAudio().execute();    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -60,6 +71,14 @@ public class Skeleton extends Activity {
             public void onClick(View view) {
                 try {
                     stopRecording();
+                    
+                	startBtn.setBackgroundResource(android.R.drawable.btn_default);
+                	startBtn.setText("Begin Recording");
+                    
+                	Context context = getApplicationContext();
+                	CharSequence text = "Finished recording";
+                	int duration = Toast.LENGTH_SHORT;
+                	Toast.makeText(context, text, duration).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -80,7 +99,7 @@ public class Skeleton extends Activity {
     }
     
     class RecordAudio extends AsyncTask<Void, Void, Void> {
-		@Override
+    	@Override
 		protected Void doInBackground(Void... params) {
 			// TODO: add exception catching and handling!
         	killAudioRecord();
@@ -169,7 +188,7 @@ public class Skeleton extends Activity {
         String outputMfccFile = "/sdcard/test.mfc";
         
         ConfigurationManager cm = new ConfigurationManager(configFile);
-    	
+        
         try {
             frontEnd = (FrontEnd) cm.lookup("mfcFrontEnd");
             audioSource = (StreamDataSource) cm.lookup("streamDataSource");
@@ -213,7 +232,7 @@ public class Skeleton extends Activity {
         
         //write the features to binary file
         DataOutputStream outStream = new DataOutputStream(new FileOutputStream(
-        		outputMfccFile));
+                        outputMfccFile));
         outStream.writeInt( allFeatures.size() * featureLength );
 
         for (float[] feature : allFeatures) {
