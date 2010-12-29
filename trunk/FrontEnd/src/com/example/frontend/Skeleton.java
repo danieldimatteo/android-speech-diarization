@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioFormat;
@@ -33,6 +35,8 @@ import java.util.List;
 
 public class Skeleton extends Activity {
     private AudioRecord recorder;
+    ProgressDialog progressDialog;
+    static final int PROGRESS_DIALOG = 0;
     private static final String OUTPUT_FILE = "/sdcard/recordoutput.raw";
 
     @Override
@@ -88,15 +92,26 @@ public class Skeleton extends Activity {
         mfccBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                	runFeatureFileDumper();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            	new makeMFCC().execute();
             }
         });
 
     }
+    
+    @Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+			case PROGRESS_DIALOG:
+				ProgressDialog mProgressDialog;
+				mProgressDialog = new ProgressDialog(this);
+				mProgressDialog.setMessage("Computing MFCCs...");
+				mProgressDialog.setCancelable(false);
+				mProgressDialog.show();
+				return mProgressDialog;
+			default:
+				return null;
+		}
+	}
     
     class RecordAudio extends AsyncTask<Void, Void, Void> {
     	@Override
@@ -178,72 +193,113 @@ public class Skeleton extends Activity {
         }
     }
     
-    private void runFeatureFileDumper() throws Exception {
-        FrontEnd frontEnd = null;
-        StreamDataSource audioSource = null;
-        List<float[]> allFeatures;
-        int featureLength = -1;
-        String configFile = "/sdcard/config.xml";
-        String inputAudioFile = "/sdcard/test.wav";
-        String outputMfccFile = "/sdcard/test.mfc";
-        
-        ConfigurationManager cm = new ConfigurationManager(configFile);
-        
-        try {
-            frontEnd = (FrontEnd) cm.lookup("mfcFrontEnd");
-            audioSource = (StreamDataSource) cm.lookup("streamDataSource");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        //set source for streaming in audio
-        audioSource.setInputStream(new FileInputStream(inputAudioFile), "audio");
-        allFeatures = new LinkedList<float[]>();
-        
-        //get features from audio
-        try {
-            assert (allFeatures != null);
-            Data feature = frontEnd.getData();
-            while (!(feature instanceof DataEndSignal)) {
-                if (feature instanceof DoubleData) {
-                    double[] featureData = ((DoubleData) feature).getValues();
-                    if (featureLength < 0) {
-                        featureLength = featureData.length;
-                        //logger.info("Feature length: " + featureLength);
-                    }
-                    float[] convertedData = new float[featureData.length];
-                    for (int i = 0; i < featureData.length; i++) {
-                        convertedData[i] = (float) featureData[i];
-                    }
-                    allFeatures.add(convertedData);
-                } else if (feature instanceof FloatData) {
-                    float[] featureData = ((FloatData) feature).getValues();
-                    if (featureLength < 0) {
-                        featureLength = featureData.length;
-                        //logger.info("Feature length: " + featureLength);
-                    }
-                    allFeatures.add(featureData);
-                }
-                feature = frontEnd.getData();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        //write the features to binary file
-        DataOutputStream outStream = new DataOutputStream(new FileOutputStream(
-                        outputMfccFile));
-        outStream.writeInt( allFeatures.size() * featureLength );
+    private class makeMFCC extends AsyncTask<Void, Void, Void> {
+    	@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showDialog(PROGRESS_DIALOG);
+		}
+    	
+		@Override
+		protected Void doInBackground(Void... params) {
+			FrontEnd frontEnd = null;
+	        StreamDataSource audioSource = null;
+	        List<float[]> allFeatures;
+	        int featureLength = -1;
+	        String configFile = "/sdcard/config.xml";
+	        String inputAudioFile = "/sdcard/test.wav";
+	        String outputMfccFile = "/sdcard/test.mfc";
+	        
+	        ConfigurationManager cm = new ConfigurationManager(configFile);
+	        
+	        try {
+	            frontEnd = (FrontEnd) cm.lookup("mfcFrontEnd");
+	            audioSource = (StreamDataSource) cm.lookup("streamDataSource");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        
+	        //set source for streaming in audio
+	        try {
+				audioSource.setInputStream(new FileInputStream(inputAudioFile), "audio");
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	        allFeatures = new LinkedList<float[]>();
+	        
+	        //get features from audio
+	        try {
+	            assert (allFeatures != null);
+	            Data feature = frontEnd.getData();
+	            while (!(feature instanceof DataEndSignal)) {
+	                if (feature instanceof DoubleData) {
+	                    double[] featureData = ((DoubleData) feature).getValues();
+	                    if (featureLength < 0) {
+	                        featureLength = featureData.length;
+	                        //logger.info("Feature length: " + featureLength);
+	                    }
+	                    float[] convertedData = new float[featureData.length];
+	                    for (int i = 0; i < featureData.length; i++) {
+	                        convertedData[i] = (float) featureData[i];
+	                    }
+	                    allFeatures.add(convertedData);
+	                } else if (feature instanceof FloatData) {
+	                    float[] featureData = ((FloatData) feature).getValues();
+	                    if (featureLength < 0) {
+	                        featureLength = featureData.length;
+	                        //logger.info("Feature length: " + featureLength);
+	                    }
+	                    allFeatures.add(featureData);
+	                }
+	                feature = frontEnd.getData();
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        
+	        //write the features to binary file
+	        DataOutputStream outStream = null;
+			try {
+				outStream = new DataOutputStream(new FileOutputStream(outputMfccFile));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        try {
+				outStream.writeInt( allFeatures.size() * featureLength );
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-        for (float[] feature : allFeatures) {
-            for (float val : feature) {
-                outStream.writeFloat(val);
-            }
-        }
+	        for (float[] feature : allFeatures) {
+	            for (float val : feature) {
+	                try {
+						outStream.writeFloat(val);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            }
+	        }
 
-        outStream.close();
+	        try {
+				outStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void unused) {
+			dismissDialog(PROGRESS_DIALOG);
+		}
     }
-
+    
     private void killAudioRecord() {
         if (recorder != null) {
             recorder.release();
