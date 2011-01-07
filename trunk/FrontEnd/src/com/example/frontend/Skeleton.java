@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import android.app.Activity;
 import android.app.Dialog;
@@ -209,6 +210,9 @@ public class Skeleton extends Activity {
 	        String configFile = "/sdcard/config.xml";
 	        String inputAudioFile = "/sdcard/recordoutput.raw";
 	        String outputMfccFile = "/sdcard/test.mfc";
+	        String outputUemFile = "/sdcard/test.uem.seg";
+	        String uemSegment;
+	        FileWriter uemWriter;
 	        
 	        ConfigurationManager cm = new ConfigurationManager(configFile);
 	        
@@ -258,7 +262,7 @@ public class Skeleton extends Activity {
 	            e.printStackTrace();
 	        }
 	        
-	        //write the features to binary file
+	        //write the MFCC features to binary file
 	        DataOutputStream outStream = null;
 			try {
 				outStream = new DataOutputStream(new FileOutputStream(outputMfccFile));
@@ -286,6 +290,18 @@ public class Skeleton extends Activity {
 
 	        try {
 				outStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//write initial segmentation file for LIUM_SpkDiarization
+			uemSegment = String.format( "test 1 0 %d U U U S0", allFeatures.size() );
+			try {
+				uemWriter = new FileWriter( outputUemFile );
+				uemWriter.write(uemSegment);
+				uemWriter.flush();
+				uemWriter.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
