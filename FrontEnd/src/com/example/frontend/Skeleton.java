@@ -207,7 +207,7 @@ public class Skeleton extends Activity {
 	        List<float[]> allFeatures;
 	        int featureLength = -1;
 	        String configFile = "/sdcard/config.xml";
-	        String inputAudioFile = "/sdcard/test.wav";
+	        String inputAudioFile = "/sdcard/recordoutput.raw";
 	        String outputMfccFile = "/sdcard/test.mfc";
 	        
 	        ConfigurationManager cm = new ConfigurationManager(configFile);
