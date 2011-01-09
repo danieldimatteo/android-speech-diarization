@@ -34,6 +34,10 @@ import java.io.FileInputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+//imports for LIUM_SpkDiarization
+import fr.lium.spkDiarization.lib.DiarizationException;
+import fr.lium.spkDiarization.programs.MSegInit;
+
 public class Skeleton extends Activity {
     private AudioRecord recorder;
     ProgressDialog progressDialog;
@@ -326,10 +330,19 @@ public class Skeleton extends Activity {
     }
     
     private class diarize extends AsyncTask<Void, Void, Void> {
+    	String[] mSegInitParams = {"trace", "help", "--fInputMask=/sdcard/test.mfc", "--fInputDesc=sphinx,1:1:0:0:0:0,13,0:0:0", "--sInputMask=/sdcard/test.uem.seg", "--sOutputMask=/sdcard/test.i.seg", "test"};
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			// TODO Auto-generated method stub
+			try {
+				MSegInit.main(mSegInitParams);
+			} catch (DiarizationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return null;
 		}
     	
