@@ -51,6 +51,8 @@ public class Skeleton extends Activity {
         Button endBtn = (Button) findViewById(R.id.stpBtn);
         
         Button mfccBtn = (Button) findViewById(R.id.mfccBtn);
+        
+        Button drzBtn = (Button) findViewById(R.id.drzBtn);
 
         startBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -94,6 +96,13 @@ public class Skeleton extends Activity {
             @Override
             public void onClick(View view) {
             	new makeMFCC().execute();
+            }
+        });
+        
+        drzBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	new diarize().execute();
             }
         });
 
@@ -314,6 +323,17 @@ public class Skeleton extends Activity {
 		protected void onPostExecute(Void unused) {
 			dismissDialog(PROGRESS_DIALOG);
 		}
+    }
+    
+    private class diarize extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    	
+    	
     }
     
     private void killAudioRecord() {

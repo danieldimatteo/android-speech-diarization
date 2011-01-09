@@ -5,7 +5,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="/home/daniel/Development/sphinx4-1.0beta5/lib/js.jar"/>
 	<classpathentry kind="lib" path="/home/daniel/Development/sphinx4-1.0beta5/lib/tags.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/sphinx4-1.0beta5/lib/jsapi.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/sphinx4-1.0beta5/lib/sphinx4.jar"/>
+	<classpathentry kind="lib" path="/home/daniel/Development/LIUM_SpkDiarization-4.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
