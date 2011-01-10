@@ -36,12 +36,17 @@ import java.util.List;
 
 //imports for LIUM_SpkDiarization
 import fr.lium.spkDiarization.lib.DiarizationException;
+//import fr.lium.spkDiarization.programs.MDecode;
 import fr.lium.spkDiarization.programs.MSegInit;
+
 
 public class Skeleton extends Activity {
     private AudioRecord recorder;
     ProgressDialog progressDialog;
-    static final int PROGRESS_DIALOG = 0;
+	ProgressDialog mProgressDialog;
+	ProgressDialog dProgressDialog;
+    static final int MFCC_DIALOG = 0;
+    static final int DRZ_DIALOG = 1;
     private static final String OUTPUT_FILE = "/sdcard/recordoutput.raw";
 
     @Override
@@ -115,13 +120,21 @@ public class Skeleton extends Activity {
     @Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-			case PROGRESS_DIALOG:
-				ProgressDialog mProgressDialog;
+			case MFCC_DIALOG:
 				mProgressDialog = new ProgressDialog(this);
 				mProgressDialog.setMessage("Computing MFCCs...");
 				mProgressDialog.setCancelable(false);
 				mProgressDialog.show();
 				return mProgressDialog;
+			
+			case DRZ_DIALOG:
+				dProgressDialog = new ProgressDialog(this);
+				dProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				dProgressDialog.setMessage("Performing Diarization...");
+				dProgressDialog.setCancelable(false);
+				dProgressDialog.show();
+				return dProgressDialog;
+			
 			default:
 				return null;
 		}
@@ -211,7 +224,7 @@ public class Skeleton extends Activity {
     	@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			showDialog(PROGRESS_DIALOG);
+			showDialog(MFCC_DIALOG);
 		}
     	
 		@Override
@@ -325,13 +338,22 @@ public class Skeleton extends Activity {
 		
 		@Override
 		protected void onPostExecute(Void unused) {
-			dismissDialog(PROGRESS_DIALOG);
+			dismissDialog(MFCC_DIALOG);
 		}
     }
     
-    private class diarize extends AsyncTask<Void, Void, Void> {
+    private class diarize extends AsyncTask<Void, Integer, Void> {
+    	int DONE_MSEGINIT = 50;
+    	//int DONE_MDECODE = 100;
     	String[] mSegInitParams = {"trace", "help", "--fInputMask=/sdcard/test.mfc", "--fInputDesc=sphinx,1:1:0:0:0:0,13,0:0:0", "--sInputMask=/sdcard/test.uem.seg", "--sOutputMask=/sdcard/test.i.seg", "test"};
-
+    	//String[] mDecodeParams = {"--trace", "--help", "--fInputDesc=sphinx,1:3:2:0:0:0,13,0:0:0", "--fInputMask=/sdcard/test.mfc", "--sInputMask=/sdcard/test.i.seg", "--sOutputMask=/sdcard/test.sms.seg", "--dPenality=10,10,50", "--tInputMask=/sdcard/sms.gmms", "test"};
+    	@Override
+    	
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showDialog(DRZ_DIALOG);
+		}
+    	
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
@@ -343,7 +365,28 @@ public class Skeleton extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			setProgress(DONE_MSEGINIT);
+
+
+//			try {
+//				MDecode.main(mDecodeParams);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			setProgress(DONE_MDECODE);
+			
 			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void unused) {
+			dismissDialog(DRZ_DIALOG);
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... value) {
+			dProgressDialog.setProgress(value[0]);
 		}
     	
     	
