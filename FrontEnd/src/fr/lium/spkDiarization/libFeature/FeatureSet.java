@@ -767,7 +767,10 @@ public class FeatureSet implements Cloneable {
 						break;
 					}
 					if (dataMap.size() < 25) {
-						String key = dataMap.pollFirstEntry().getKey();
+						//String key = dataMap.pollFirstEntry().getKey();
+						// method pollFirstEntry() is undefined ... ? 
+						String key = dataMap.firstKey();
+						dataMap.remove(key);
 						System.err.print("[FeatureSet] read : remove data from "+key);
 					} else {
 						dataMap.clear();

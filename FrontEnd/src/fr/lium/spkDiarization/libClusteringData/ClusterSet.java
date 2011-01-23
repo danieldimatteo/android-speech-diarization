@@ -43,8 +43,8 @@ import edu.thesis.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
-import fr.lium.experimental.EPAC.xml.XmlEPACInputOutput;
-import fr.lium.experimental.MEDIA.xml.XmlMEDIAInputOutput;
+//import fr.lium.experimental.EPAC.xml.XmlEPACInputOutput;
+//import fr.lium.experimental.MEDIA.xml.XmlMEDIAInputOutput;
 import fr.lium.experimental.spkDiarization.libClusteringData.transcription.Entity;
 import fr.lium.experimental.spkDiarization.libClusteringData.transcription.EntitySet;
 import fr.lium.experimental.spkDiarization.libClusteringData.transcription.Link;
@@ -543,13 +543,13 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 				readBck(file);
 			} else if (format.equals(ParameterSegmentationFile.SegmentationFormat.FILE_CTL)) {
 				readCTL(file, param.getEncoding());
-			} else if (format.equals(ParameterSegmentationFile.SegmentationFormat.FILE_XML_EPAC)) {
+			} /*else if (format.equals(ParameterSegmentationFile.SegmentationFormat.FILE_XML_EPAC)) {
 				readXmlEPAC(file, param.getEncoding());
 			} else if (format.equals(ParameterSegmentationFile.SegmentationFormat.FILE_XML_MEDIA)) {
 				System.err.println("*****MEDIA ****");
 				readXmlMEDIA(file, param.getEncoding());
 				System.err.println("*****MEDIA ****");
-			} else {
+			}*/ else {
 				read(file, param.getEncoding());
 			}
 		}
@@ -584,10 +584,10 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public void readXmlEPAC(File f, Charset encoding) throws Exception {
+	/*public void readXmlEPAC(File f, Charset encoding) throws Exception {
 		XmlEPACInputOutput xmlEPAC = new XmlEPACInputOutput();
 		xmlEPAC.readXML(this, f, encoding);
-	}
+	}*/
 
 	/**
 	 * Read xml for MEDIA format.
@@ -597,10 +597,10 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public void readXmlMEDIA(File f, Charset encoding) throws Exception {
+	/*public void readXmlMEDIA(File f, Charset encoding) throws Exception {
 		XmlMEDIAInputOutput xmlMEDIA = new XmlMEDIAInputOutput();
 		xmlMEDIA.readXML(this, f, encoding);
-	}
+	}*/
 
 	/**
 	 * Read a segmentation file.
@@ -811,7 +811,7 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 				int start = segment.getStart();
 				int length = segment.getLength();
 				for (int i = start; i < (start + length); i++) {
-					if (showName.isEmpty()) {
+					if (showName.length() == 0) {
 						showName = segment.getShowName();
 					} else {
 						if (showName.equals(segment.getShowName()) == false) {
@@ -845,13 +845,15 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 		String segOutFilename = IOFile.getFilename(param.getMask(), showName);
 		File f = new File(segOutFilename);
 		SegmentationFormat format = param.getFormat();
+		/*
 		if (format.equals(ParameterSegmentationFile.SegmentationFormat.FILE_XML_EPAC)) {
 			XmlEPACInputOutput xmlEPAC = new XmlEPACInputOutput();
 			xmlEPAC.writeXML(this, f, param.getEncoding());
 		} else if (format.equals(ParameterSegmentationFile.SegmentationFormat.FILE_XML_MEDIA)) {
 			XmlMEDIAInputOutput xmlMEDIA = new XmlMEDIAInputOutput();
 			xmlMEDIA.writeXML(this, f, param.getEncoding());
-		} else {
+		}
+		*/
 			OutputStreamWriter dos = new OutputStreamWriter(new FileOutputStream(f), param.getEncoding());
 			int cpt = 0;
 			for (Cluster cluster : clusterMap.values()) {
@@ -863,7 +865,7 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 				cpt++;
 			}
 			dos.close();
-		}
+		
 	}
 
 }

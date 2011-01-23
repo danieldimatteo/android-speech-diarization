@@ -22,6 +22,7 @@ package fr.lium.experimental.spkDiarization.libClusteringData.transcription;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeMap;
 
 import fr.lium.spkDiarization.lib.DiarizationException;
@@ -67,10 +68,19 @@ public class LinkSet implements Iterable<Link>, Cloneable {
 		for (Link link : list) {
 			clone.list.add(link);
 		}
+		/*
 		for (String key : information.descendingKeySet()) {
 			Object value = information.get(key);
 			clone.information.put(key, value);
 		}
+		*/
+		
+		Set<String> keys = information.keySet();
+		for (String key : keys) {
+			Object value = information.get(key);
+			clone.information.put(key, value);
+		}
+		
 		return clone;
 	}
 

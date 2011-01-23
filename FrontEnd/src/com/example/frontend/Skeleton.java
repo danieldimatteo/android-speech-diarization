@@ -37,6 +37,7 @@ import java.util.List;
 //imports for LIUM_SpkDiarization
 import fr.lium.spkDiarization.lib.DiarizationException;
 //import fr.lium.spkDiarization.programs.MDecode;
+import fr.lium.spkDiarization.programs.MDecode;
 import fr.lium.spkDiarization.programs.MSegInit;
 
 
@@ -344,9 +345,9 @@ public class Skeleton extends Activity {
     
     private class diarize extends AsyncTask<Void, Integer, Void> {
     	int DONE_MSEGINIT = 50;
-    	//int DONE_MDECODE = 100;
+    	int DONE_MDECODE = 100;
     	String[] mSegInitParams = {"trace", "help", "--fInputMask=/sdcard/test.mfc", "--fInputDesc=sphinx,1:1:0:0:0:0,13,0:0:0", "--sInputMask=/sdcard/test.uem.seg", "--sOutputMask=/sdcard/test.i.seg", "test"};
-    	//String[] mDecodeParams = {"--trace", "--help", "--fInputDesc=sphinx,1:3:2:0:0:0,13,0:0:0", "--fInputMask=/sdcard/test.mfc", "--sInputMask=/sdcard/test.i.seg", "--sOutputMask=/sdcard/test.sms.seg", "--dPenality=10,10,50", "--tInputMask=/sdcard/sms.gmms", "test"};
+    	String[] mDecodeParams = {"--trace", "--help", "--fInputDesc=sphinx,1:3:2:0:0:0,13,0:0:0", "--fInputMask=/sdcard/test.mfc", "--sInputMask=/sdcard/test.i.seg", "--sOutputMask=/sdcard/test.sms.seg", "--dPenality=10,10,50", "--tInputMask=/sdcard/sms.gmms", "test"};
     	@Override
     	
 		protected void onPreExecute() {
@@ -368,13 +369,13 @@ public class Skeleton extends Activity {
 			setProgress(DONE_MSEGINIT);
 
 
-//			try {
-//				MDecode.main(mDecodeParams);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			setProgress(DONE_MDECODE);
+			try {
+				MDecode.main(mDecodeParams);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setProgress(DONE_MDECODE);
 			
 			return null;
 		}
