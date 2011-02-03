@@ -155,9 +155,9 @@ public class Skeleton extends Activity {
 
             
             int bufferSize = AudioRecord.getMinBufferSize(
-    				(int)16000, 
+    				(int)8000, 
     				AudioFormat.CHANNEL_IN_MONO, 
-    				AudioFormat.ENCODING_PCM_16BIT) * 2;
+    				AudioFormat.ENCODING_PCM_16BIT) * 4;
             
 
             short[] microphoneBuffer = new short[bufferSize];
@@ -165,7 +165,7 @@ public class Skeleton extends Activity {
             
             recorder = new AudioRecord(
                     MediaRecorder.AudioSource.VOICE_RECOGNITION,
-                    16000,
+                    8000,
                     AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
                     bufferSize);
