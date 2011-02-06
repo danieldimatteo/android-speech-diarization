@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,13 +25,13 @@ import fr.lium.spkDiarization.programs.MSeg;
 
 public class Skeleton extends Activity {
     public AudioRecordWrapper recorderWrapper;
+    public RawAudioPlayback audioPlayer;
     ProgressDialog progressDialog;
 	ProgressDialog mProgressDialog;
 	ProgressDialog dProgressDialog;
-    //Flags, etc.
+    //Dialog aliases
 	public static final int MFCC_DIALOG = 0;
     public static final int DRZ_DIALOG = 1;
-    public static final int STREAM_MUSIC  = 0x00000003;
     //File Locations
     public static final String AUDIO_FILE = "/sdcard/recordoutput.raw";
     public static final String CONFIG_FILE = "/sdcard/config.xml";
@@ -38,9 +40,11 @@ public class Skeleton extends Activity {
     //Audio Settings
     public static final int AUDIO_SOURCE = MediaRecorder.AudioSource.VOICE_RECOGNITION;
     public static final int SAMPLE_RATE = 16000;
-    public static final int CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+    public static final int CHANNELS_IN = AudioFormat.CHANNEL_IN_MONO;
+    public static final int CHANNELS_OUT = AudioFormat.CHANNEL_CONFIGURATION_MONO;
     public static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    
+    public static final int AUDIO_STREAM = AudioManager.STREAM_MUSIC;
+    public static final int PLAYBACK_MODE = AudioTrack.MODE_STREAM;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +157,7 @@ public class Skeleton extends Activity {
     	
 		@Override
 		protected Void doInBackground(Void... params) {
-			recorderWrapper = new AudioRecordWrapper(AUDIO_FILE, AUDIO_SOURCE, SAMPLE_RATE, CHANNELS, AUDIO_FORMAT);
+			recorderWrapper = new AudioRecordWrapper(AUDIO_FILE, AUDIO_SOURCE, SAMPLE_RATE, CHANNELS_IN, AUDIO_FORMAT);
 			recorderWrapper.record();
 			return null;
 		}
@@ -233,31 +237,8 @@ public class Skeleton extends Activity {
     private class playbackRecording extends AsyncTask<Void, Void, Void> {
     	@Override
     	protected Void doInBackground(Void... params){
-//    	    short[] buffer;
-//
-//    	    int minSize =AudioTrack.getMinBufferSize( 
-//    	    		(int) 8000, 
-//    	    		AudioFormat.CHANNEL_CONFIGURATION_MONO, 
-//    	    		AudioFormat.ENCODING_PCM_16BIT );        
-//    	    
-//    	    AudioTrack recording = new AudioTrack( 
-//    	    		AudioManager.STREAM_MUSIC, 
-//    	    		(int) 8000, 
-//    	            AudioFormat.CHANNEL_CONFIGURATION_MONO,
-//    	            AudioFormat.ENCODING_PCM_16BIT, 
-//    	            minSize, 
-//    	            AudioTrack.MODE_STREAM);
-//    	    
-//    	    recording.play();
-//    	    
-//    	    //read PCM sample from recording
-//    	    try {
-//				FileInputStream audioStream = new FileInputStream(AUDIO_FILE);
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
     	    
+    		audioPlayer = new RawAudioPlayback(AUDIO_FILE, AUDIO_STREAM, SAMPLE_RATE, CHANNELS_OUT, AUDIO_FORMAT, PLAYBACK_MODE );
     	    
     		return null;
     	}
