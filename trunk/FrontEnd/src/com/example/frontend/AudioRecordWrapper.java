@@ -5,43 +5,49 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
-import android.os.AsyncTask;
 
-class RecordAudio extends AsyncTask<AudioRecord, Void , Void> {
-    String AUDIO_FILE = "/sdcard/recordoutput.raw";
-
-	@Override
-	protected Void doInBackground(AudioRecord... recorder) {
-		if (recorder[0] != null) {
-            recorder[0].release();
+public class AudioRecordWrapper {
+    String audioFile;
+    int audioSource;
+    int sampleRateInHz;
+    int channelConfig;
+    int audioFormat;
+    AudioRecord recorder;
+	
+    public AudioRecordWrapper(String audio, int audioSrc, int sampleRt, int channelCfg, int audioFrmt){
+    	audioFile = audio;
+    	audioSource = audioSrc;
+    	sampleRateInHz = sampleRt;
+    	channelConfig = channelCfg;
+    	audioFormat = audioFrmt;   	
+    }
+    
+	public void record() {
+		
+		if (recorder != null) {
+            recorder.release();
         }
         
-        File outFile = new File(AUDIO_FILE);
+        File outFile = new File(audioFile);
 
         if(outFile.exists())
         {
             outFile.delete();
         }
 
-        
         int bufferSize = AudioRecord.getMinBufferSize(
-				(int)8000, 
-				AudioFormat.CHANNEL_IN_MONO, 
-				AudioFormat.ENCODING_PCM_16BIT) * 4;
+				sampleRateInHz, 
+				channelConfig, 
+				audioFormat) * 4;
         
-
         short[] microphoneBuffer = new short[bufferSize];
-
         
-        recorder[0] = new AudioRecord(
-                MediaRecorder.AudioSource.VOICE_RECOGNITION,
-                8000,
-                AudioFormat.CHANNEL_IN_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
+        recorder = new AudioRecord(
+                audioSource,
+                sampleRateInHz,
+                channelConfig,
+                audioFormat,
                 bufferSize);
 
         FileOutputStream outFileStream = null;
@@ -53,11 +59,11 @@ class RecordAudio extends AsyncTask<AudioRecord, Void , Void> {
 		}
         DataOutputStream dataOutStream = new DataOutputStream(outFileStream);
         
-        recorder[0].startRecording();
+        recorder.startRecording();
                 	
-        while(recorder[0].getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+        while(recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
 	        
-        	int numSamplesRead = recorder[0].read(microphoneBuffer, 0, bufferSize);
+        	int numSamplesRead = recorder.read(microphoneBuffer, 0, bufferSize);
 	        
 	        if(numSamplesRead == AudioRecord.ERROR_INVALID_OPERATION) {
 	            throw new IllegalStateException("read() returned AudioRecord.ERROR_INVALID_OPERATION");
@@ -83,6 +89,14 @@ class RecordAudio extends AsyncTask<AudioRecord, Void , Void> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return;
+	}
+
+	public void stop() {
+		recorder.stop();
+	}
+
+	public void release() {
+		recorder.release();
 	}
 }
