@@ -42,11 +42,16 @@ public class Skeleton extends Activity {
     ProgressDialog progressDialog;
 	ProgressDialog mProgressDialog;
 	ProgressDialog dProgressDialog;
-    static final int MFCC_DIALOG = 0;
+    //Flags, etc.
+	static final int MFCC_DIALOG = 0;
     static final int DRZ_DIALOG = 1;
     static final int STREAM_MUSIC  = 0x00000003;
-    private static final String AUDIO_FILE = "/sdcard/recordoutput.raw";
-
+    //File Locations
+    static final String AUDIO_FILE = "/sdcard/recordoutput.raw";
+    static final String configFile = "/sdcard/config.xml";
+    static final String outputMfccFile = "/sdcard/test.mfc";
+    static final String outputUemFile = "/sdcard/test.uem.seg";    
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,110 +168,8 @@ public class Skeleton extends Activity {
     	
 		@Override
 		protected Void doInBackground(Void... params) {
-			FrontEnd frontEnd = null;
-	        StreamDataSource audioSource = null;
-	        List<float[]> allFeatures;
-	        int featureLength = -1;
-	        String configFile = "/sdcard/config.xml";
-	        String inputAudioFile = "/sdcard/recordoutput.raw";
-	        String outputMfccFile = "/sdcard/test.mfc";
-	        String outputUemFile = "/sdcard/test.uem.seg";
-	        String uemSegment;
-	        FileWriter uemWriter;
-	        
-	        ConfigurationManager cm = new ConfigurationManager(configFile);
-	        
-	        try {
-	            frontEnd = (FrontEnd) cm.lookup("mfcFrontEnd");
-	            audioSource = (StreamDataSource) cm.lookup("streamDataSource");
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	        
-	        //set source for streaming in audio
-	        try {
-				audioSource.setInputStream(new FileInputStream(inputAudioFile), "audio");
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-	        allFeatures = new LinkedList<float[]>();
-	        
-	        //get features from audio
-	        try {
-	            assert (allFeatures != null);
-	            Data feature = frontEnd.getData();
-	            while (!(feature instanceof DataEndSignal)) {
-	                if (feature instanceof DoubleData) {
-	                    double[] featureData = ((DoubleData) feature).getValues();
-	                    if (featureLength < 0) {
-	                        featureLength = featureData.length;
-	                        //logger.info("Feature length: " + featureLength);
-	                    }
-	                    float[] convertedData = new float[featureData.length];
-	                    for (int i = 0; i < featureData.length; i++) {
-	                        convertedData[i] = (float) featureData[i];
-	                    }
-	                    allFeatures.add(convertedData);
-	                } else if (feature instanceof FloatData) {
-	                    float[] featureData = ((FloatData) feature).getValues();
-	                    if (featureLength < 0) {
-	                        featureLength = featureData.length;
-	                        //logger.info("Feature length: " + featureLength);
-	                    }
-	                    allFeatures.add(featureData);
-	                }
-	                feature = frontEnd.getData();
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	        
-	        //write the MFCC features to binary file
-	        DataOutputStream outStream = null;
-			try {
-				outStream = new DataOutputStream(new FileOutputStream(outputMfccFile));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        try {
-				outStream.writeInt( allFeatures.size() * featureLength );
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-	        for (float[] feature : allFeatures) {
-	            for (float val : feature) {
-	                try {
-						outStream.writeFloat(val);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	            }
-	        }
-
-	        try {
-				outStream.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//write initial segmentation file for LIUM_SpkDiarization
-			uemSegment = String.format( "test 1 0 %d U U U S0", allFeatures.size() );
-			try {
-				uemWriter = new FileWriter( outputUemFile );
-				uemWriter.write(uemSegment);
-				uemWriter.flush();
-				uemWriter.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+			MfccMaker Mfcc = new MfccMaker(configFile, AUDIO_FILE, outputMfccFile, outputUemFile); 
+			Mfcc.produceFeatures();
 			return null;
 		}
 		
