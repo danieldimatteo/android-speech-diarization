@@ -1,16 +1,12 @@
 package com.example.frontend;
 
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.AudioRecord;
+import android.media.AudioFormat;
+import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -19,18 +15,6 @@ import android.widget.Button;
 import android.widget.Toast;
 import edu.thesis.skeleton.R;
 
-//imports for sphinx4 front end
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-import java.io.FileInputStream;
-import java.util.LinkedList;
-import java.util.List;
-
 //imports for LIUM_SpkDiarization
 import fr.lium.spkDiarization.lib.DiarizationException;
 import fr.lium.spkDiarization.programs.MClust;
@@ -38,19 +22,25 @@ import fr.lium.spkDiarization.programs.MSeg;
 
 
 public class Skeleton extends Activity {
-    private AudioRecord recorder;
+    public AudioRecordWrapper recorderWrapper;
     ProgressDialog progressDialog;
 	ProgressDialog mProgressDialog;
 	ProgressDialog dProgressDialog;
     //Flags, etc.
-	static final int MFCC_DIALOG = 0;
-    static final int DRZ_DIALOG = 1;
-    static final int STREAM_MUSIC  = 0x00000003;
+	public static final int MFCC_DIALOG = 0;
+    public static final int DRZ_DIALOG = 1;
+    public static final int STREAM_MUSIC  = 0x00000003;
     //File Locations
-    static final String AUDIO_FILE = "/sdcard/recordoutput.raw";
-    static final String configFile = "/sdcard/config.xml";
-    static final String outputMfccFile = "/sdcard/test.mfc";
-    static final String outputUemFile = "/sdcard/test.uem.seg";    
+    public static final String AUDIO_FILE = "/sdcard/recordoutput.raw";
+    public static final String CONFIG_FILE = "/sdcard/config.xml";
+    public static final String MFCC_FILE = "/sdcard/test.mfc";
+    public static final String UEM_FILE = "/sdcard/test.uem.seg";    
+    //Audio Settings
+    public static final int AUDIO_SOURCE = MediaRecorder.AudioSource.VOICE_RECOGNITION;
+    public static final int SAMPLE_RATE = 16000;
+    public static final int CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+    public static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
+    
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +70,7 @@ public class Skeleton extends Activity {
                 	startBtn.setBackgroundColor(Color.RED);
                 	startBtn.setText("Recording");
                 	
-                	new RecordAudio().execute(recorder);    
+                	new recordConvo().execute();    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -154,9 +144,20 @@ public class Skeleton extends Activity {
     
 
     private void stopRecording() throws Exception {
-        if (recorder != null) {
-            recorder.stop();
+        if (recorderWrapper != null) {
+            recorderWrapper.stop();
         }
+    }
+    
+    private class recordConvo extends AsyncTask<Void, Void, Void> {
+    	
+		@Override
+		protected Void doInBackground(Void... params) {
+			recorderWrapper = new AudioRecordWrapper(AUDIO_FILE, AUDIO_SOURCE, SAMPLE_RATE, CHANNELS, AUDIO_FORMAT);
+			recorderWrapper.record();
+			return null;
+		}
+
     }
     
     private class makeMFCC extends AsyncTask<Void, Void, Void> {
@@ -168,7 +169,7 @@ public class Skeleton extends Activity {
     	
 		@Override
 		protected Void doInBackground(Void... params) {
-			MfccMaker Mfcc = new MfccMaker(configFile, AUDIO_FILE, outputMfccFile, outputUemFile); 
+			MfccMaker Mfcc = new MfccMaker(CONFIG_FILE, AUDIO_FILE, MFCC_FILE, UEM_FILE); 
 			Mfcc.produceFeatures();
 			return null;
 		}
@@ -264,8 +265,8 @@ public class Skeleton extends Activity {
     }
     
     private void killAudioRecord() {
-        if (recorder != null) {
-            recorder.release();
+        if (recorderWrapper != null) {
+            recorderWrapper.release();
         }
     }
 
