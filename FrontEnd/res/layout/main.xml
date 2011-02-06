@@ -8,13 +8,16 @@
     <Button android:id="@+id/bgnBtn" android:layout_width="fill_parent"
     android:layout_height="wrap_content" android:text="Begin Recording"/>
 
-        <Button android:id="@+id/stpBtn" android:layout_width="fill_parent"
+    <Button android:id="@+id/stpBtn" android:layout_width="fill_parent"
     android:layout_height="wrap_content" android:text="Stop Recording"/>
     
-            <Button android:id="@+id/mfccBtn" android:layout_width="fill_parent"
+    <Button android:id="@+id/mfccBtn" android:layout_width="fill_parent"
     android:layout_height="wrap_content" android:text="Generate Features"/>
 
-            <Button android:id="@+id/drzBtn" android:layout_width="fill_parent"
+    <Button android:id="@+id/drzBtn" android:layout_width="fill_parent"
     android:layout_height="wrap_content" android:text="Diarize"/>
+    
+    <Button android:id="@+id/plyBtn" android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:text="Playback"/>
 
 </LinearLayout>
