@@ -12,7 +12,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,7 +50,8 @@ public class Skeleton extends Activity {
 	ProgressDialog dProgressDialog;
     static final int MFCC_DIALOG = 0;
     static final int DRZ_DIALOG = 1;
-    private static final String OUTPUT_FILE = "/sdcard/recordoutput.raw";
+    static final int STREAM_MUSIC  = 0x00000003;
+    private static final String AUDIO_FILE = "/sdcard/recordoutput.raw";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,8 @@ public class Skeleton extends Activity {
         Button mfccBtn = (Button) findViewById(R.id.mfccBtn);
         
         Button drzBtn = (Button) findViewById(R.id.drzBtn);
+        
+        Button plyBtn = (Button) findViewById(R.id.plyBtn);
 
         startBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -114,6 +120,13 @@ public class Skeleton extends Activity {
             	new diarize().execute();
             }
         });
+        
+        plyBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	new playbackRecording().execute();
+            }
+        });
 
     }
     
@@ -143,10 +156,9 @@ public class Skeleton extends Activity {
     class RecordAudio extends AsyncTask<Void, Void, Void> {
     	@Override
 		protected Void doInBackground(Void... params) {
-			// TODO: add exception catching and handling!
         	killAudioRecord();
             
-            File outFile = new File(OUTPUT_FILE);
+            File outFile = new File(AUDIO_FILE);
 
             if(outFile.exists())
             {
@@ -389,6 +401,40 @@ public class Skeleton extends Activity {
 			dProgressDialog.setProgress(value[0]);
 		}
     	
+    	
+    }
+    
+    private class playbackRecording extends AsyncTask<Void, Void, Void> {
+    	@Override
+    	protected Void doInBackground(Void... params){
+//    	    short[] buffer;
+//
+//    	    int minSize =AudioTrack.getMinBufferSize( 
+//    	    		(int) 8000, 
+//    	    		AudioFormat.CHANNEL_CONFIGURATION_MONO, 
+//    	    		AudioFormat.ENCODING_PCM_16BIT );        
+//    	    
+//    	    AudioTrack recording = new AudioTrack( 
+//    	    		AudioManager.STREAM_MUSIC, 
+//    	    		(int) 8000, 
+//    	            AudioFormat.CHANNEL_CONFIGURATION_MONO,
+//    	            AudioFormat.ENCODING_PCM_16BIT, 
+//    	            minSize, 
+//    	            AudioTrack.MODE_STREAM);
+//    	    
+//    	    recording.play();
+//    	    
+//    	    //read PCM sample from recording
+//    	    try {
+//				FileInputStream audioStream = new FileInputStream(AUDIO_FILE);
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+    	    
+    	    
+    		return null;
+    	}
     	
     }
     
