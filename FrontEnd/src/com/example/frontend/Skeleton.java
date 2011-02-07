@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -239,6 +241,12 @@ public class Skeleton extends Activity {
     	protected Void doInBackground(Void... params){
     	    
     		audioPlayer = new RawAudioPlayback(AUDIO_FILE, AUDIO_STREAM, SAMPLE_RATE, CHANNELS_OUT, AUDIO_FORMAT, PLAYBACK_MODE );
+    		try {
+				audioPlayer.play();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	    
     		return null;
     	}
