@@ -19,5 +19,8 @@
     
     <Button android:id="@+id/plyBtn" android:layout_width="fill_parent"
     android:layout_height="wrap_content" android:text="Playback"/>
+    
+    <Button android:id="@+id/stopPlyBtn" android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:text="Stop Playback"/>
 
 </LinearLayout>

@@ -842,10 +842,12 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 	 */
 	public void write(String showName, ParameterSegmentationFile param) throws IOException, ParserConfigurationException, SAXException, DiarizationException,
 			TransformerException {
+		
+		/* Original code - cutting out since we can't do XML stuff ... 
 		String segOutFilename = IOFile.getFilename(param.getMask(), showName);
 		File f = new File(segOutFilename);
 		SegmentationFormat format = param.getFormat();
-		/*
+		
 		if (format.equals(ParameterSegmentationFile.SegmentationFormat.FILE_XML_EPAC)) {
 			XmlEPACInputOutput xmlEPAC = new XmlEPACInputOutput();
 			xmlEPAC.writeXML(this, f, param.getEncoding());
@@ -853,7 +855,7 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 			XmlMEDIAInputOutput xmlMEDIA = new XmlMEDIAInputOutput();
 			xmlMEDIA.writeXML(this, f, param.getEncoding());
 		}
-		*/
+		
 			OutputStreamWriter dos = new OutputStreamWriter(new FileOutputStream(f), param.getEncoding());
 			int cpt = 0;
 			for (Cluster cluster : clusterMap.values()) {
@@ -865,6 +867,26 @@ public class ClusterSet implements Cloneable, Iterable<String> {
 				cpt++;
 			}
 			dos.close();
+		*/
+		
+		String segOutFilename = IOFile.getFilename(param.getMask(), showName);
+		File f = new File(segOutFilename);
+		
+		/* unread ...
+		SegmentationFormat format = param.getFormat(); 
+		*/
+		
+		OutputStreamWriter dos = new OutputStreamWriter(new FileOutputStream(f), param.getEncoding());
+		int cpt = 0;
+		for (Cluster cluster : clusterMap.values()) {
+			if (param.getFormat().equals(ParameterSegmentationFile.SegmentationFormat.FILE_CTL)) {
+				cluster.writeAsCTL(dos);
+			} else {
+				cluster.write(dos);
+			}
+			cpt++;
+		}
+		dos.close();
 		
 	}
 

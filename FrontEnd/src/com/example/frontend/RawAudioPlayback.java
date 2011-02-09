@@ -81,4 +81,12 @@ public class RawAudioPlayback {
     	}
     }
     
+    public void stopPlayback(){
+		if (track != null) {
+			track.flush();
+			track.stop();
+            track.release();
+        }
+    }
+    
 }
