@@ -63,6 +63,8 @@ public class Skeleton extends Activity {
         Button drzBtn = (Button) findViewById(R.id.drzBtn);
         
         Button plyBtn = (Button) findViewById(R.id.plyBtn);
+        
+        Button stopPlyBtn = (Button) findViewById(R.id.stopPlyBtn);
 
         startBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -120,6 +122,13 @@ public class Skeleton extends Activity {
             @Override
             public void onClick(View view) {
             	new playbackRecording().execute();
+            }
+        });
+        
+        stopPlyBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	audioPlayer.stopPlayback();
             }
         });
 
@@ -265,6 +274,7 @@ public class Skeleton extends Activity {
         super.onDestroy();
 
         killAudioRecord();
+        audioPlayer.stopPlayback();
     }
 
 }

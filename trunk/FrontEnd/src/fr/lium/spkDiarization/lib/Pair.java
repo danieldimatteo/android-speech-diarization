@@ -42,10 +42,13 @@ public class Pair<A, B> {
 		return (x == null && y == null) || (x != null && x.equals(y));
 	}
 
+	// changed casting from (Pair) to (Pair<?,?>) to eliminate warning about generic types in Pair
 	public boolean equals(Object other) {
-		return other instanceof  Pair && equals(fst, ((Pair) other).fst)
-		&& equals(snd, ((Pair) other).snd);
+		return ( other instanceof  Pair<?,?> ) && equals(fst, ((Pair<?,?>) other).fst)
+		&& equals(snd, ((Pair<?,?>) other).snd);
 	}
+	
+	
 
 	public int hashCode() {
 		if (fst == null)
