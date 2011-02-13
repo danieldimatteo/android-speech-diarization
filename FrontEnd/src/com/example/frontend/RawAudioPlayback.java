@@ -89,4 +89,10 @@ public class RawAudioPlayback {
         }
     }
     
+    public void release(){
+		if (track != null) {
+            track.release();
+        }
+    }
+    
 }

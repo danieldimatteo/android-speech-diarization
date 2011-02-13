@@ -26,20 +26,25 @@ import fr.lium.spkDiarization.programs.MSeg;
 
 
 public class Skeleton extends Activity {
+	
+	// Audio recording + play back
     public AudioRecordWrapper recorderWrapper;
     public RawAudioPlayback audioPlayer;
+    
+    // Dialogs 
     ProgressDialog progressDialog;
 	ProgressDialog mProgressDialog;
 	ProgressDialog dProgressDialog;
-    //Dialog aliases
 	public static final int MFCC_DIALOG = 0;
     public static final int DRZ_DIALOG = 1;
-    //File Locations
+    
+    // File Locations
     public static final String AUDIO_FILE = "/sdcard/recordoutput.raw";
     public static final String CONFIG_FILE = "/sdcard/config.xml";
     public static final String MFCC_FILE = "/sdcard/test.mfc";
     public static final String UEM_FILE = "/sdcard/test.uem.seg";    
-    //Audio Settings
+    
+    // Audio Settings
     public static final int AUDIO_SOURCE = MediaRecorder.AudioSource.VOICE_RECOGNITION;
     public static final int SAMPLE_RATE = 16000;
     public static final int CHANNELS_IN = AudioFormat.CHANNEL_IN_MONO;
@@ -47,6 +52,8 @@ public class Skeleton extends Activity {
     public static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
     public static final int AUDIO_STREAM = AudioManager.STREAM_MUSIC;
     public static final int PLAYBACK_MODE = AudioTrack.MODE_STREAM;
+    
+    // Methods:
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +96,9 @@ public class Skeleton extends Activity {
             @Override
             public void onClick(View view) {
                 try {
-                    stopRecording();
+                    if (recorderWrapper != null) {
+                        recorderWrapper.stop();
+                    }
                     
                 	startBtn.setBackgroundResource(android.R.drawable.btn_default);
                 	startBtn.setText("Begin Recording");
@@ -158,12 +167,6 @@ public class Skeleton extends Activity {
 	}
     
 
-    private void stopRecording() throws Exception {
-        if (recorderWrapper != null) {
-            recorderWrapper.stop();
-        }
-    }
-    
     private class recordConvo extends AsyncTask<Void, Void, Void> {
     	
 		@Override
@@ -262,19 +265,19 @@ public class Skeleton extends Activity {
     	
     }
     
-    private void killAudioRecord() {
-        if (recorderWrapper != null) {
-            recorderWrapper.release();
-        }
-    }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        killAudioRecord();
-        audioPlayer.stopPlayback();
+        if (recorderWrapper != null) {
+            recorderWrapper.release();
+        }
+        
+        if (audioPlayer != null) {
+        	audioPlayer.release();
+        }
     }
 
 }
