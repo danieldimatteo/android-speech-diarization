@@ -37,7 +37,7 @@ public class RawAudioPlayback {
         int bufferSize = AudioTrack.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
     	track = new AudioTrack(audioStream, sampleRateInHz, channelConfig, audioFormat, bufferSize, mode);
     	
-    	buffer = new short[1024];
+    	buffer = new short[bufferSize];
     	
     	audioSampleFile = new File(audio);
     	numberSamples = audioSampleFile.length() / 2;
@@ -59,10 +59,12 @@ public class RawAudioPlayback {
     		track.write(buffer, 0, buffer.length);
     	}
     	
-    	track.flush();
-    	track.stop();
-    	track.release();
-
+    	if ( track.getPlayState() != AudioTrack.PLAYSTATE_STOPPED){
+    		track.flush();
+    		track.stop();
+    		track.release();
+    	}
+    	
     	return;
     }
     
@@ -83,9 +85,8 @@ public class RawAudioPlayback {
     
     public void stopPlayback(){
 		if (track != null) {
-			track.flush();
 			track.stop();
-            track.release();
+			track.flush();
         }
     }
     
