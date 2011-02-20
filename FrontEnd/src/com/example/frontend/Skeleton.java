@@ -94,6 +94,8 @@ public class Skeleton extends Activity {
         Button plyBtn = (Button) findViewById(R.id.plyBtn);
         
         Button stopPlyBtn = (Button) findViewById(R.id.stopPlyBtn);
+        
+        Button processBtn = (Button) findViewById(R.id.processBtn);
 
         startBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -160,6 +162,13 @@ public class Skeleton extends Activity {
             @Override
             public void onClick(View view) {
             	audioPlayer.stopPlayback();
+            }
+        });
+        
+        processBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	Conversation convo = new Conversation("/sdcard/test.l.seg");
             }
         });
         
