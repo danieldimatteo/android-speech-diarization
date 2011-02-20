@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -168,7 +169,8 @@ public class Skeleton extends Activity {
         processBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-            	Conversation convo = new Conversation("/sdcard/test.l.seg");
+                Intent resultsIntent = new Intent(view.getContext(), Results.class);
+                startActivityForResult(resultsIntent, 0);
             }
         });
         
