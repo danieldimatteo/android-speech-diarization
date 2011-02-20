@@ -11,6 +11,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.example.frontend.Results"></activity>
 
     </application>
     <uses-sdk android:minSdkVersion="7" />
