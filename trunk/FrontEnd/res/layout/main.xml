@@ -22,5 +22,8 @@
     
     <Button android:id="@+id/stopPlyBtn" android:layout_width="fill_parent"
     android:layout_height="wrap_content" android:text="Stop Playback"/>
+    
+    <Button android:id="@+id/processBtn" android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:text="Process Results"/>
 
 </LinearLayout>

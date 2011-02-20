@@ -26,12 +26,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.Vector;
+
 
 public class Conversation {
-	Turn[] turns;
+	public Vector<Turn> turns;
 	int numSpeakers;
 	
 	public Conversation(String pathToSegFile){
+		turns = new Vector<Turn>();
 		FileReader segFile = null;
 		numSpeakers = 0;
 		
@@ -48,24 +51,30 @@ public class Conversation {
 		try {
 			while( (line = in.readLine()) != null ){
 				numSpeakers++;
+				
+				Turn turnFromSegFile = new Turn();
+				
 				StringTokenizer segFileEntry = new StringTokenizer(line);
 				
 				segFileEntry.nextToken(); //show not used
 				segFileEntry.nextToken(); //channel not used
-				turns[(numSpeakers-1)].start = Integer.parseInt(segFileEntry.nextToken());
-				turns[(numSpeakers-1)].length = Integer.parseInt(segFileEntry.nextToken());
+				turnFromSegFile.start = Integer.parseInt(segFileEntry.nextToken());
+				turnFromSegFile.length = Integer.parseInt(segFileEntry.nextToken());
 				segFileEntry.nextToken(); //gender not used
 				segFileEntry.nextToken(); //band not used
 				segFileEntry.nextToken(); //environment not used
-				turns[(numSpeakers-1)].speaker = segFileEntry.nextToken();
+				turnFromSegFile.speaker = segFileEntry.nextToken();
 
-				turns[(numSpeakers-1)].end = turns[(numSpeakers-1)].start + turns[(numSpeakers-1)].length - 1;
+				turnFromSegFile.end = turnFromSegFile.start + turnFromSegFile.length - 1;
+				
+				turns.add(turnFromSegFile);
+					
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
-		
+				
 	}
 	
 
