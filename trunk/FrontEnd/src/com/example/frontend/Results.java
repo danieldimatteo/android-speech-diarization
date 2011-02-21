@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class Results extends Activity {
     /** Called when the activity is first created. */
@@ -45,6 +46,21 @@ public class Results extends Activity {
             }
 
         });
+       
 
+    }
+    
+    public void onStart() {
+    	super.onStart();
+        
+    	Conversation convo = new Conversation("/sdcard/test.l.seg");
+    	
+    	TextView results = (TextView) findViewById(R.id.results);
+    	
+    	results.append("\nNumber of Speakers: " + Integer.toString(convo.numSpeakers));
+    	
+    	results.invalidate();
+
+        
     }
 }

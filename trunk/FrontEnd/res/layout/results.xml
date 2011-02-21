@@ -6,7 +6,9 @@
     <TextView android:id="@+id/results"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="Hello, I am the results lol >:3" />
+              android:text="RESULTS:"
+              android:paddingBottom="3mm"
+              android:paddingTop="3mm" />
     <Button android:id="@+id/doneBtn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
