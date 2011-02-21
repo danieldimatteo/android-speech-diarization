@@ -52,15 +52,20 @@ public class Results extends Activity {
     
     public void onStart() {
     	super.onStart();
+    	TextView results = (TextView) findViewById(R.id.results);
         
     	Conversation convo = new Conversation("/sdcard/test.l.seg");
     	
-    	TextView results = (TextView) findViewById(R.id.results);
+    	results.append("\n\nNumber of Speakers: " + Integer.toString(convo.numSpeakers) + "\n");
     	
-    	results.append("\nNumber of Speakers: " + Integer.toString(convo.numSpeakers));
+    	for (int i = 0; i < convo.numSpeakers; i++ ) {
+    		results.append("\nSpeaker: " + convo.turns.get(i).speaker );
+    		results.append("\nStart: " + Integer.toString(convo.turns.get(i).start) );
+    		results.append("\nLength: " + Integer.toString(convo.turns.get(i).length) );
+    		results.append("\nEnd: " + Integer.toString(convo.turns.get(i).end) + "\n" );
+    	}
     	
     	results.invalidate();
 
-        
     }
 }
