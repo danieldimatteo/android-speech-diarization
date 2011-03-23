@@ -32,11 +32,13 @@ import java.util.Vector;
 public class Conversation {
 	public Vector<Turn> turns;
 	int numSpeakers;
+	int totalLength;
 	
 	public Conversation(String pathToSegFile){
 		turns = new Vector<Turn>();
 		FileReader segFile = null;
 		numSpeakers = 0;
+		totalLength = 0;
 		
 		try {
 			segFile = new FileReader(pathToSegFile);
@@ -67,13 +69,19 @@ public class Conversation {
 
 				turnFromSegFile.end = turnFromSegFile.start + turnFromSegFile.length - 1;
 				
-				turns.add(turnFromSegFile);
-					
+				totalLength += turnFromSegFile.length;
+
+				turns.add(turnFromSegFile);	
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
+		
+		//Go back and add % spoke (can't do until we have total length):
+    	for (int i = 0; i < numSpeakers; i++ ) {
+    		turns.get(i).percentSpeaking = (100 * turns.get(i).length) / totalLength;
+    	}
 				
 	}
 	
