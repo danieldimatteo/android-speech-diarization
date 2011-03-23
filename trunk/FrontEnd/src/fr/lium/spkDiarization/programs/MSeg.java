@@ -24,9 +24,13 @@
 
 package fr.lium.spkDiarization.programs;
 
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 
 import fr.lium.spkDiarization.lib.MainTools;
 import fr.lium.spkDiarization.lib.DiarizationException;
@@ -385,19 +389,12 @@ public class MSeg {
 	public static void make(FeatureSet features, ClusterSet clusters, ClusterSet clustersRes, Parameter param) throws Exception {
 		if (param.parameterSegmentation.isRecursion()) {
 			ArrayList<Segment> arraySegment = new ArrayList<Segment>();
-// while (itCluster.hasNext()) {
 			for (String cle : clusters) {
-// String cle = itCluster.next();
-// Iterator<Segment> itSeg = clusters.getCluster(cle).iterator();
-// while (itSeg.hasNext()) {
-// Segment seg = itSeg.next();
 				for (Segment seg : clusters.getCluster(cle)) {
 					if (param.trace) {
 						System.out.println("trace[mSeg] \t doMeasures");
 					}
 					double[] m = MSeg.doMeasures(features, seg, param);
-					// doSplit(m, seg, seg.getStartFrameIndex(),
-					// param.segMinWSize, arraySegment);
 					if (doSplit2(m, seg, seg.getStart(), param.parameterSegmentation.getMinimimWindowSize(), arraySegment, param, features) == false) {
 						arraySegment.add(seg);
 					}
@@ -410,18 +407,15 @@ public class MSeg {
 			}
 		} else {
 			int idx = 0;
+			
 			for (String cle : clusters) {
-// while (itCluster.hasNext()) {
-// String cle = itCluster.next();
-// Iterator<Segment> itSeg = clusters.getCluster(cle).iterator();
-// while (itSeg.hasNext()) {
-// Segment seg = itSeg.next();
-
 				for (Segment seg : clusters.getCluster(cle)) {
+
 					if (param.trace) {
 						System.out.println("trace[mSeg] \t doMeasures");
 					}
 					double[] m = MSeg.doMeasures(features, seg, param);
+					dumpMeasures(m);
 					if (param.trace) {
 						System.out.println("trace[mSeg] \t doBorders");
 					}
@@ -430,10 +424,9 @@ public class MSeg {
 						System.out.println("trace[mSeg] \t doClusters");
 					}
 					idx = MSeg.doClusters(idx, b, seg, clustersRes, param);
-					// test segmentation validationn
-					// MSeg.valide(features, clustersRes, param);
 				}
 			}
+
 		}
 	}
 
@@ -481,6 +474,31 @@ public class MSeg {
 			param.parameterSegmentation.printMinimimWindowSize(); // sMinWSize
 			param.parameterSegmentation.printRecursion(); // sMinWSize
 		}
+	}
+	
+	
+	/**
+	 * Dumps the linear segmentation measures to a binary file.
+	 */	
+	public static void dumpMeasures(double[] measures) {
+
+		DataOutputStream outStream = null;
+
+		try {
+			outStream = new DataOutputStream(new FileOutputStream("/sdcard/linSegMeasures"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for (double val : measures) {
+            try {
+				outStream.writeDouble(val);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
 	}
 
 }

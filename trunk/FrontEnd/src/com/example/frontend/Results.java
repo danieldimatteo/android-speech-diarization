@@ -62,7 +62,8 @@ public class Results extends Activity {
     		results.append("\nSpeaker: " + convo.turns.get(i).speaker );
     		results.append("\nStart: " + Integer.toString(convo.turns.get(i).start) );
     		results.append("\nLength: " + Integer.toString(convo.turns.get(i).length) );
-    		results.append("\nEnd: " + Integer.toString(convo.turns.get(i).end) + "\n" );
+    		results.append("\nEnd: " + Integer.toString(convo.turns.get(i).end) );
+    		results.append("\nPercent Speaking: " + Integer.toString(convo.turns.get(i).percentSpeaking) + "%\n" );
     	}
     	
     	results.invalidate();
