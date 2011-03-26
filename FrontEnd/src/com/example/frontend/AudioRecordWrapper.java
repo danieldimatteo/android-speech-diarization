@@ -1,6 +1,7 @@
 /**
- * Android Speech Diarization - Calculates the amount of time spent speaking by each speaker
- * 								in a conversation
+ * Android Speech Diarization - Calculates the amount of time spent speaking
+ * 								by each speaker in a conversation
+ * 
  * Copyright (C) 2011  Daniel Di Matteo
  *
  * 
@@ -16,7 +17,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * 
  */
 
 package com.example.frontend;

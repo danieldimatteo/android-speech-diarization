@@ -1,6 +1,7 @@
 /**
- * Android Speech Diarization - Calculates the amount of time spent speaking by each speaker
- * 								in a conversation
+ * Android Speech Diarization - Calculates the amount of time spent speaking
+ * 								by each speaker in a conversation
+ * 
  * Copyright (C) 2011  Daniel Di Matteo
  *
  * 
@@ -24,13 +25,65 @@ package com.example.frontend;
 import edu.thesis.skeleton.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+//import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+//public class Results extends Activity {
+//    /** Called when the activity is first created. */
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.results);
+//
+//        Button doneBtn = (Button) findViewById(R.id.doneBtn);
+//        
+//        doneBtn.setOnClickListener(new OnClickListener() {
+//            public void onClick(View view) {
+//                Intent intent = new Intent();
+//                setResult(RESULT_OK, intent);
+//                finish();
+//            }
+//
+//        });
+//       
+//
+//    }
+//    
+//    public void onStart() {
+//    	super.onStart();
+//    	TextView results = (TextView) findViewById(R.id.results);
+//        
+//    	Conversation convo = new Conversation("/sdcard/test.l.seg");
+//    	
+//    	results.append("\n\nNumber of Speakers: " + Integer.toString(convo.numSpeakers) + "\n");
+//    	
+//    	for (int i = 0; i < convo.numSpeakers; i++ ) {
+//    		results.append("\nSpeaker: " + convo.turns.get(i).speaker );
+//    		results.append("\nStart: " + Integer.toString(convo.turns.get(i).start) );
+//    		results.append("\nLength: " + Integer.toString(convo.turns.get(i).length) );
+//    		results.append("\nEnd: " + Integer.toString(convo.turns.get(i).end) );
+//    		results.append("\nPercent Speaking: " + Integer.toString(convo.turns.get(i).percentSpeaking) + "%\n" );
+//    	}
+//    	
+//    	results.invalidate();
+//
+//    }
+//}
 
 public class Results extends Activity {
+	
+	List<PieChartItem> PieData = new ArrayList<PieChartItem>(0);
+	
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,27 +99,59 @@ public class Results extends Activity {
             }
 
         });
-       
-
     }
     
     public void onStart() {
     	super.onStart();
-    	TextView results = (TextView) findViewById(R.id.results);
-        
-    	Conversation convo = new Conversation("/sdcard/test.l.seg");
-    	
-    	results.append("\n\nNumber of Speakers: " + Integer.toString(convo.numSpeakers) + "\n");
-    	
-    	for (int i = 0; i < convo.numSpeakers; i++ ) {
-    		results.append("\nSpeaker: " + convo.turns.get(i).speaker );
-    		results.append("\nStart: " + Integer.toString(convo.turns.get(i).start) );
-    		results.append("\nLength: " + Integer.toString(convo.turns.get(i).length) );
-    		results.append("\nEnd: " + Integer.toString(convo.turns.get(i).end) );
-    		results.append("\nPercent Speaking: " + Integer.toString(convo.turns.get(i).percentSpeaking) + "%\n" );
-    	}
-    	
-    	results.invalidate();
 
+    	PieChartItem Item;
+        Random mNumGen  = new Random();
+        int MaxPieItems = mNumGen.nextInt(20);
+        int MaxCount  = 0;
+        int ItemCount = 0;
+
+        // TEMPORARY: Generating data by a random loop
+        // will actually populate chart with data from Conversation
+        for (int i = 0; i < MaxPieItems ; i++) {
+        	ItemCount  = mNumGen.nextInt(256);
+        	Item       = new PieChartItem();
+        	Item.count = ItemCount;
+        	Item.label = "Valeur " + mNumGen.nextInt(1000);
+        	Item.colour = 0xff000000 + 256*256*mNumGen.nextInt(256) + 256*mNumGen.nextInt(256) + mNumGen.nextInt(256);
+        	PieData.add(Item);
+        	MaxCount += ItemCount;
+        }
+
+        // Size => Pie size
+        int Size = 1000;
+
+        // BgColor  => The background Pie Colour
+        int BgColor = 0x00000000;
+
+        // mBackgroundImage  => Temporary image will be drawn with the content of pie view
+        Bitmap mBackgroundImage = Bitmap.createBitmap(Size, Size, Bitmap.Config.RGB_565);
+
+        
+        // Generating Pie view
+        PieChartView PieChart = new PieChartView( this );
+        PieChart.setLayoutParams(new LayoutParams(Size, Size));
+        PieChart.setGeometry(Size, Size, 2, 2, 2, 2);
+        PieChart.setSkinParams(BgColor);
+        PieChart.setData(PieData, MaxCount);
+        PieChart.invalidate();
+
+        // Draw PieChart View on Bitmap canvas
+        PieChart.draw(new Canvas(mBackgroundImage));
+        PieChart = null;
+
+        // Create a new ImageView to add to main layout
+        ImageView mImageView = new ImageView(this);
+	    mImageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+	    mImageView.setBackgroundColor(BgColor);
+	    mImageView.setImageBitmap( mBackgroundImage );
+	    
+        // Add Image View to target view
+        LinearLayout TargetPieView =  (LinearLayout) findViewById(R.id.pieContainer);
+	    TargetPieView.addView(mImageView);
     }
 }
