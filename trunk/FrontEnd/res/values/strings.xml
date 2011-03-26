@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, FrontEnd!</string>
     <string name="app_name">Front End</string>
+    <color name="Black">#00000000</color>
 </resources>

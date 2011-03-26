@@ -9,8 +9,15 @@
               android:text="RESULTS:"
               android:paddingBottom="3mm"
               android:paddingTop="3mm" />
-    <Button android:id="@+id/doneBtn"
+            
+     <LinearLayout android:id="@+id/pieContainer" 
+				   android:layout_width="fill_parent" 
+				   android:layout_height="fill_parent" 
+				   android:orientation="vertical" android:background="@color/Black" />
+	
+	<Button android:id="@+id/doneBtn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Done" />
+
 </LinearLayout>
