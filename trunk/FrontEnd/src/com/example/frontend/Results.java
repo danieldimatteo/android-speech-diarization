@@ -83,14 +83,18 @@ import java.util.Random;
 public class Results extends Activity {
 	
 	List<PieChartItem> PieData = new ArrayList<PieChartItem>(0);
+	Conversation convo;
 	
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.results);
-
-        Button doneBtn = (Button) findViewById(R.id.doneBtn);
         
+        // Get statistics of the conversation
+        convo = new Conversation("/sdcard/test.l.seg");
+
+        // Set up button to exit this view
+        Button doneBtn = (Button) findViewById(R.id.doneBtn);
         doneBtn.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent();
@@ -106,17 +110,16 @@ public class Results extends Activity {
 
     	PieChartItem Item;
         Random mNumGen  = new Random();
-        int MaxPieItems = mNumGen.nextInt(20);
+        int MaxPieItems = convo.numSpeakers;
         int MaxCount  = 0;
         int ItemCount = 0;
 
-        // TEMPORARY: Generating data by a random loop
-        // will actually populate chart with data from Conversation
+        // Populate chart with data from Conversation
         for (int i = 0; i < MaxPieItems ; i++) {
-        	ItemCount  = mNumGen.nextInt(256);
+        	ItemCount  = convo.turns.get(i).length;
         	Item       = new PieChartItem();
         	Item.count = ItemCount;
-        	Item.label = "Valeur " + mNumGen.nextInt(1000);
+        	Item.label = "Speaker " + (i+1);
         	Item.colour = 0xff000000 + 256*256*mNumGen.nextInt(256) + 256*mNumGen.nextInt(256) + mNumGen.nextInt(256);
         	PieData.add(Item);
         	MaxCount += ItemCount;
@@ -130,7 +133,6 @@ public class Results extends Activity {
 
         // mBackgroundImage  => Temporary image will be drawn with the content of pie view
         Bitmap mBackgroundImage = Bitmap.createBitmap(Size, Size, Bitmap.Config.RGB_565);
-
         
         // Generating Pie view
         PieChartView PieChart = new PieChartView( this );
