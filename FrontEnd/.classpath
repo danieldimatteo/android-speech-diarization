@@ -3,18 +3,16 @@
 	<classpathentry excluding="fr/lium/experimental/video/" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/blas.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/f2jutil.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/java-getopt-1.0.13.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/js.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/jsapi.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/junit-4.8.1.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/lapack.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/repackagedSound.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/repackagedXML.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/sphinx4.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/tags.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/UmlGraph.jar"/>
-	<classpathentry kind="lib" path="/home/daniel/Development/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/blas.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/f2jutil.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/java-getopt-1.0.13.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/js.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/jsapi.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/lapack.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/repackagedSound.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/repackagedXML.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/sphinx4.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/tags.jar"/>
+	<classpathentry kind="lib" path="E:/Development/libs/UmlGraph.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

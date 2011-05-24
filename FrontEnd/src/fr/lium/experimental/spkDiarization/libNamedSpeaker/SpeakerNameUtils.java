@@ -234,7 +234,7 @@ public class SpeakerNameUtils {
 	 */
 	public static String normalizeSpeakerName(String name){
 		String ch = name.toLowerCase();
-		ch = ch.replace('é','e');
+/*		ch = ch.replace('é','e');
 		ch = ch.replace('è','e');
 		ch = ch.replace('ê','e');
 		ch = ch.replace('ë','e');
@@ -250,7 +250,7 @@ public class SpeakerNameUtils {
 		ch = ch.replace('ç','c');
 		ch = ch.replace(' ', '_');
 		ch = ch.replace('-', '_');
-
+*/
 		return ch;
 	}
 
